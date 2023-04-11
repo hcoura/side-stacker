@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "side-stacker"
+version = "0.1.0"
+description = ""
+authors = ["Henrique Coura <coura.henrique@gmail.com>"]
+readme = "README.md"
+packages = [{include = "side_stacker"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.95.0"}
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
