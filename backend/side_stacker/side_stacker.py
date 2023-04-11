@@ -16,6 +16,13 @@ class SideStacker:
     def board_state(self) -> str:
         rows = [" ".join(row) for row in self.board]
         return "\n".join(rows)
+    
+    def state(self) -> dict:
+        return {
+            "current_player": self.current_player,
+            "board": self.board,
+            "result": self.result,
+        }
 
     def play(self, player: str, row: int, side: str) -> str:
         if self.result is not None:

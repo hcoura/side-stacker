@@ -9,6 +9,7 @@ packages = [{include = "side_stacker"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = {extras = ["all"], version = "^0.95.0"}
+websockets = "^11.0.1"
 
 
 [tool.poetry.group.dev.dependencies]

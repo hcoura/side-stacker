@@ -5,6 +5,7 @@ import './App.css';
   //  Home - New Game / Join Game
   //  GameView (ws stuff)
   //  favicon and stuff
+  //  clean repo
 
 function App() {
   return (
