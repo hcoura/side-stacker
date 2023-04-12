@@ -1,5 +1,7 @@
 # Side Stacker
 
+Test description: https://docs.monadical.com/s/monadical-study-guide#Difficulty-Advanced-full-stack
+
 I timeboxed myself and was feeling a bit sick, so:
 
 * A bunch of todo's
