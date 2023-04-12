@@ -1,22 +1,49 @@
-import { Link } from "react-router-dom";
+import { useCallback, useState } from "react";
 import './App.css';
+import Game from "./Game";
 
 // TODO:
-  //  Home - New Game / Join Game
-  //  GameView (ws stuff)
-  //  favicon and stuff
-  //  clean repo
+//  Home - New Game / Join Game
+//  GameView (ws stuff)
+//  favicon and stuff
+//  clean repo
+// remove router
 
 function App() {
+  const [gameId, setGameId] = useState("");
+  const [inputGameId, setInputGameId] = useState("");
+
+  const createNewGame = useCallback(() => {
+    fetch('http://localhost:8000/game/new', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    }).then((response) => response.json())
+      .then((data) => {
+        setInputGameId("");
+        setGameId(data.game_id);
+      })
+      .catch((err) => {
+        // TODO
+        console.log(err.message);
+      });
+  })
+
   return (
     <div className="App">
-      {/* <header className="App-header">
-        
-      </header> */}
-      <button><Link to={`game`}>New Game</Link></button>
+      <h1>Side Stacker</h1>
       <div>
-        Game id: <input></input> <button>Join game</button>
+        <button onClick={createNewGame}>New Game</button>
       </div>
+      <br />
+      <div>
+        Game id: <input value={inputGameId} onChange={(e) => setInputGameId(e.target.value)} />
+        {" "}<button onClick={() => setGameId(inputGameId)}>Join game</button>
+      </div>
+
+      <hr />
+      {gameId && <Game gameId={gameId} />}
     </div>
   );
 }
