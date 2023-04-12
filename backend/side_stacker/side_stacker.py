@@ -1,3 +1,6 @@
+import uuid
+
+
 PLAYER_ONE = "X"
 PLAYER_TWO = "O"
 TIE = "tie"
@@ -19,18 +22,20 @@ class SideStacker:
     board: list[list] = None
     current_player: str = None
     winner: str = None
+    id: str = None
     # TODO: test state
     state: str = None
 
     def __init__(self) -> None:
+        self.id = str(uuid.uuid4())
         self.board = [["_" for _ in range(7)] for _ in range(7)]
-        # TODO: randomly assign starting player
         self.current_player = PLAYER_ONE
         self.state = STATE_NEW
         self.winning_lines = self._get_winning_lines()
 
     def game_state(self) -> dict:
         return {
+            "id": self.id,
             "current_player": self.current_player,
             "board": self.board,
             "state": self.state,
@@ -110,12 +115,12 @@ class SideStacker:
                 # column
                 if i + 3 < 7:
                     lines.append([(i, j), (i + 1, j), (i + 2, j), (i + 3, j)])
-                # d1
+                # d1 \
                 if i + 3 < 7 and j + 3 < 7:
                     lines.append(
                         [(i, j), (i + 1, j + 1), (i + 2, j + 2), (i + 3, j + 3)]
                     )
-                # d2
+                # d2 /
                 if i + 3 < 7 and j - 3 >= 0:
                     lines.append(
                         [(i, j), (i + 1, j - 1), (i + 2, j - 2), (i + 3, j - 3)]
