@@ -1,4 +1,5 @@
 from fastapi import WebSocket
+from sqlalchemy.orm import Session
 
 from side_stacker.side_stacker import (
     PLAYER_ONE,
@@ -27,7 +28,7 @@ class GameManager:
         }
         return game.id
 
-    async def join_game(self, websocket: WebSocket, game_id: str):
+    async def join_game(self, websocket: WebSocket, game_id: str, db: Session):
         if game_id not in self.games:
             raise InvalidGame("Game doesnt exist")
         game_dict = self.games[game_id]
@@ -42,17 +43,17 @@ class GameManager:
             await websocket.send_json({"type": "player", "player": PLAYER_TWO})
         else:
             raise InvalidGame("Game is full")
-        await self.broadcast_game_state(game_id)
+        await self.broadcast_game_state(game_id, db)
 
-    def leave_game(self, websocket: WebSocket, game_id: str):
+    async def leave_game(self, websocket: WebSocket, game_id: str, db: Session):
         if game_id not in self.games:
             raise InvalidGame("Game doesnt exist")
 
         # TODO: broadcast the other player won
 
-        del self.games[game_id]
+        await self._finish_game(game_id, db)
 
-    async def play(self, data: dict, game_id: str):
+    async def play(self, data: dict, game_id: str, db: Session):
         # TODO: can't play until everyone joined
         if game_id not in self.games:
             raise InvalidGame("Game doesnt exist")
@@ -66,9 +67,9 @@ class GameManager:
             # TODO: communicate move is invalid and why
             return
 
-        await self.broadcast_game_state(game_id)
+        await self.broadcast_game_state(game_id, db)
 
-    async def broadcast_game_state(self, game_id: str):
+    async def broadcast_game_state(self, game_id: str, db: Session):
         if game_id not in self.games:
             raise InvalidGame("Game doesnt exist")
 
@@ -85,4 +86,9 @@ class GameManager:
             await p2.send_json(state)
 
         if state["state"] == STATE_FINISHED:
-            del self.games[game_id]
+            await self._finish_game(game_id, db)
+    
+    async def _finish_game(self, game_id: str, db: Session):
+        game = self.games[game_id]["game"]
+        game.save(db)
+        del self.games[game_id]

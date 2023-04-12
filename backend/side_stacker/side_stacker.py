@@ -1,5 +1,9 @@
 import uuid
 
+from sqlalchemy.orm import Session
+
+from side_stacker.models import SideStackerGame
+
 
 PLAYER_ONE = "X"
 PLAYER_TWO = "O"
@@ -18,7 +22,6 @@ class InvalidMoveException(Exception):
 
 
 class SideStacker:
-    # TODO: really None here?
     board: list[list] = None
     current_player: str = None
     winner: str = None
@@ -52,6 +55,14 @@ class SideStacker:
         self._switch_current_player()
         self._eval_board()
         return self.game_state()
+
+    def save(self, db: Session):
+        board_str = "\n".join([",".join(row) for row in self.board])
+        db_item = SideStackerGame(
+            id=self.id, winner=self.winner, state=self.state, board=board_str
+        )
+        db.add(db_item)
+        db.commit()
 
     def _make_move(self, player: str, row: int, side: str):
         if not 0 <= row < 7:

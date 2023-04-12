@@ -5,6 +5,7 @@ I timeboxed myself and was feeling a bit sick, so:
 * A bunch of todo's
 * Code not as elegant as I would like
 * [Programmer Art](https://en.wikipedia.org/wiki/Programmer_art) UI
+* Not enough tests
 
 But hey it's playable and you should be able to pick enough signal about my coding
 
