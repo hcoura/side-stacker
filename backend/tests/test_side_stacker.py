@@ -1,160 +1,159 @@
 import pytest
-from side_stacker.side_stacker import SideStacker
+from side_stacker.side_stacker import BOARD_LEFT, BOARD_RIGHT, PLAYER_ONE, PLAYER_TWO, InvalidMoveException, SideStacker
 
-# TODO: test all exceptions
-# TODO: create proper exceptions
+
 def test_initial_board_state():
     game = SideStacker()
-    expected = """
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-""".strip()
+    expected = [
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+    ]
 
-    assert game.board_state() == expected
+    assert game.game_state()["board"] == expected
 
 
 def test_play():
     game = SideStacker()
-    game.play("X", 1, "Left")
-    expected = """
-_ _ _ _ _ _ _
-X _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-""".strip()
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    expected = [
+        "_ _ _ _ _ _ _".split(),
+        "X _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+    ]
 
-    assert game.board_state() == expected
+    assert game.game_state()["board"] == expected
 
-    game.play("O", 1, "Left")
-    expected = """
-_ _ _ _ _ _ _
-X O _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-""".strip()
+    game.play(PLAYER_TWO, 1, BOARD_LEFT)
+    expected = [
+        "_ _ _ _ _ _ _".split(),
+        "X O _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+    ]
 
-    assert game.board_state() == expected
+    assert game.game_state()["board"] == expected
 
-    game.play("X", 1, "Left")
-    game.play("O", 6, "Right")
-    game.play("X", 6, "Right")
-    game.play("O", 5, "Right")
-    game.play("X", 5, "Left")
-    expected = """
-_ _ _ _ _ _ _
-X O X _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-_ _ _ _ _ _ _
-X _ _ _ _ _ O
-_ _ _ _ _ X O
-""".strip()
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 6, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 6, BOARD_RIGHT)
+    game.play(PLAYER_TWO, 5, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 5, BOARD_LEFT)
+    expected = [
+        "_ _ _ _ _ _ _".split(),
+        "X O X _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "_ _ _ _ _ _ _".split(),
+        "X _ _ _ _ _ O".split(),
+        "_ _ _ _ _ X O".split(),
+    ]
 
-    assert game.board_state() == expected
+    assert game.game_state()["board"] == expected
 
 
 def test_row_full():
     game = SideStacker()
     # Fill row 1
-    game.play("X", 1, "Left")
-    game.play("O", 1, "Left")
-    game.play("X", 1, "Left")
-    game.play("O", 1, "Left")
-    game.play("X", 1, "Left")
-    game.play("O", 1, "Left")
-    game.play("X", 1, "Left")
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 1, BOARD_LEFT)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 1, BOARD_LEFT)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 1, BOARD_LEFT)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
 
-    with pytest.raises(Exception):
-        game.play("O", 1, "Left")
+    with pytest.raises(InvalidMoveException):
+        game.play(PLAYER_TWO, 1, BOARD_LEFT)
 
 
 def test_row_win():
     game = SideStacker()
-    # X wins row 1
-    game.play("X", 1, "Left")
-    game.play("O", 3, "Left")
-    game.play("X", 1, "Left")
-    game.play("O", 3, "Left")
-    game.play("X", 1, "Left")
-    game.play("O", 3, "Left")
-    game.play("X", 1, "Left")
+    # Player one wins row 1
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_LEFT)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_LEFT)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_LEFT)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
 
-    assert game.result == "X"
+    assert game.winner == PLAYER_ONE
 
 
 def test_column_win():
     game = SideStacker()
-    # X wins column 0
-    game.play("X", 1, "Left")
-    game.play("O", 3, "Right")
-    game.play("X", 2, "Left")
-    game.play("O", 3, "Right")
-    game.play("X", 3, "Left")
-    game.play("O", 3, "Right")
-    game.play("X", 4, "Left")
+    # Player one wins column 0
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 2, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 3, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 4, BOARD_LEFT)
 
-    assert game.result == "X"
+    assert game.winner == PLAYER_ONE
 
 
 def test_diagonal_win():
     game = SideStacker()
-    # X wins (1,0), (2,1), (3,2), (4,3)
-    game.play("X", 1, "Left")
-    game.play("O", 2, "Left")
-    game.play("X", 2, "Left")
-    game.play("O", 3, "Left")
-    game.play("X", 3, "Left")
-    game.play("O", 4, "Left")
-    game.play("X", 3, "Left")
-    game.play("O", 4, "Left")
-    game.play("X", 3, "Left")
-    game.play("O", 4, "Left")
-    game.play("X", 4, "Left")
+    # Player one wins (1,0), (2,1), (3,2), (4,3)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 2, BOARD_LEFT)
+    game.play(PLAYER_ONE, 2, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_LEFT)
+    game.play(PLAYER_ONE, 3, BOARD_LEFT)
+    game.play(PLAYER_TWO, 4, BOARD_LEFT)
+    game.play(PLAYER_ONE, 3, BOARD_LEFT)
+    game.play(PLAYER_TWO, 4, BOARD_LEFT)
+    game.play(PLAYER_ONE, 3, BOARD_LEFT)
+    game.play(PLAYER_TWO, 4, BOARD_LEFT)
+    game.play(PLAYER_ONE, 4, BOARD_LEFT)
 
-    assert game.result == "X"
+    assert game.winner == PLAYER_ONE
 
     # Other side
     game = SideStacker()
-    # X wins (1,6), (2,5), (3,4), (4,3)
-    game.play("X", 1, "Right")
-    game.play("O", 2, "Right")
-    game.play("X", 2, "Right")
-    game.play("O", 3, "Right")
-    game.play("X", 3, "Right")
-    game.play("O", 4, "Right")
-    game.play("X", 3, "Right")
-    game.play("O", 4, "Right")
-    game.play("X", 3, "Right")
-    game.play("O", 4, "Right")
-    game.play("X", 4, "Right")
+    # Player one wins (1,6), (2,5), (3,4), (4,3)
+    game.play(PLAYER_ONE, 1, BOARD_RIGHT)
+    game.play(PLAYER_TWO, 2, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 2, BOARD_RIGHT)
+    game.play(PLAYER_TWO, 3, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 3, BOARD_RIGHT)
+    game.play(PLAYER_TWO, 4, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 3, BOARD_RIGHT)
+    game.play(PLAYER_TWO, 4, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 3, BOARD_RIGHT)
+    game.play(PLAYER_TWO, 4, BOARD_RIGHT)
+    game.play(PLAYER_ONE, 4, BOARD_RIGHT)
 
-    assert game.result == "X"
+    assert game.winner == PLAYER_ONE
 
 
 def test_cant_play_after_win():
     game = SideStacker()
-    # X wins row 1
-    game.play("X", 1, "Left")
-    game.play("O", 3, "Left")
-    game.play("X", 1, "Left")
-    game.play("O", 3, "Left")
-    game.play("X", 1, "Left")
-    game.play("O", 3, "Left")
-    game.play("X", 1, "Left")
+    # Player one wins row 1
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_LEFT)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_LEFT)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
+    game.play(PLAYER_TWO, 3, BOARD_LEFT)
+    game.play(PLAYER_ONE, 1, BOARD_LEFT)
 
-    with pytest.raises(Exception):
-        game.play("O", 3, "Left")
+    with pytest.raises(InvalidMoveException):
+        game.play(PLAYER_TWO, 3, BOARD_LEFT)
 
 
 def test_full_board_winner():
@@ -169,9 +168,9 @@ def test_full_board_winner():
         "X X O O X O X".split(),
     ]
 
-    game.play("X", 0, "Left")
+    game.play(PLAYER_ONE, 0, BOARD_LEFT)
 
-    assert game.result == "X"
+    assert game.winner == PLAYER_ONE
 
 
 def test_full_board_tie():
@@ -186,10 +185,6 @@ def test_full_board_tie():
         "X X O O X O X".split(),
     ]
 
-    game.play("X", 0, "Left")
+    game.play(PLAYER_ONE, 0, BOARD_LEFT)
 
-    assert game.result == "tie"
-
-
-# full board with winner
-# full board with tie
+    assert game.winner == "tie"
