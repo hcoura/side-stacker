@@ -1,19 +1,12 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import './App.css';
 import Game from "./Game";
-
-// TODO:
-//  Home - New Game / Join Game
-//  GameView (ws stuff)
-//  favicon and stuff
-//  clean repo
-// remove router
 
 function App() {
   const [gameId, setGameId] = useState("");
   const [inputGameId, setInputGameId] = useState("");
 
-  const createNewGame = useCallback(() => {
+  const createNewGame = () => {
     fetch('http://localhost:8000/game/new', {
       method: 'POST',
       headers: {
@@ -28,7 +21,7 @@ function App() {
         // TODO
         console.log(err.message);
       });
-  })
+  };
 
   return (
     <div className="App">

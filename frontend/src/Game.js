@@ -1,6 +1,6 @@
 import './App.css';
-import React, { useState, useCallback, useEffect } from 'react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import React, { useState, useEffect } from 'react';
+import useWebSocket from 'react-use-websocket';
 import Board from "./components/Board";
 
 const WS_URL = 'ws://localhost:8000/ws/game/';
@@ -8,7 +8,7 @@ const WS_URL = 'ws://localhost:8000/ws/game/';
 function Game({ gameId }) {
   const [err, setErr] = useState("");
 
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(`${WS_URL}${gameId}`, {
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket(`${WS_URL}${gameId}`, {
     onOpen: () => {
       setErr("");
     },
