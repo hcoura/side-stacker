@@ -48,10 +48,15 @@ class GameManager:
     async def leave_game(self, websocket: WebSocket, game_id: str, db: Session):
         if game_id not in self.games:
             raise InvalidGame("Game doesnt exist")
+        
+        if self.games[game_id][PLAYER_ONE] == websocket:
+            self.games[game_id][PLAYER_ONE] = None
+        elif self.games[game_id][PLAYER_TWO] == websocket:
+            self.games[game_id][PLAYER_TWO] = None
 
         # TODO: broadcast the other player won
 
-        await self._finish_game(game_id, db)
+        # await self._finish_game(game_id, db)
 
     async def play(self, data: dict, game_id: str, db: Session):
         # TODO: can't play until everyone joined
