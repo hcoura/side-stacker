@@ -2,10 +2,12 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import useWebSocket from 'react-use-websocket';
 import Board from "./components/Board";
+import { useParams } from "react-router-dom";
 
 const WS_URL = 'ws://localhost:8000/ws/game/';
 
-function Game({ gameId }) {
+function Game() {
+  const { gameId } = useParams();
   const [err, setErr] = useState("");
 
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(`${WS_URL}${gameId}`, {
