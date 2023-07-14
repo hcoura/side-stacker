@@ -22,11 +22,28 @@ function App() {
       });
   };
 
+  const createNewSinglePlayerGame = () => {
+    fetch('http://localhost:8000/game/new/single-player', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    }).then((response) => response.json())
+      .then((data) => {
+        navigate(`/game/${data.game_id}`);
+      })
+      .catch((err) => {
+        // TODO
+        console.log(err.message);
+      });
+  }
+
   return (
     <div className="App">
       <h1>Side Stacker</h1>
       <div>
         <button onClick={createNewGame}>New Game</button>
+        <button onClick={createNewSinglePlayerGame}>New Single Player Game</button>
       </div>
       <br />
       <div>

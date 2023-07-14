@@ -36,6 +36,11 @@ async def new_game(db: Session = Depends(get_db)):
     return {"game_id": game_manager.new_game()}
 
 
+@app.post("/game/new/single-player")
+async def new_game(db: Session = Depends(get_db)):
+    return {"game_id": game_manager.new_single_game()}
+
+
 @app.websocket("/ws/game/{game_id}")
 async def game(websocket: WebSocket, game_id: str, db: Session = Depends(get_db)):
     await game_manager.join_game(websocket, game_id, db)

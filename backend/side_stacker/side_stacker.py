@@ -1,4 +1,5 @@
 import uuid
+from random import choice
 
 from sqlalchemy.orm import Session
 
@@ -63,6 +64,32 @@ class SideStacker:
         )
         db.add(db_item)
         db.commit()
+    
+    def play_bot(self):
+        if self.state == STATE_FINISHED:
+            return
+        row, side = self._get_bot_move()
+        self.play(self.current_player, row, side)
+
+    def _get_bot_move(self):
+        possible_moves = self._get_possible_moves()
+        return choice(possible_moves)
+    
+    def _get_possible_moves(self):
+        possible_moves = []
+        for row in range(7):
+            for position in range(7):
+                if position > 0  and self.board[row][position - 1] == "_":
+                    continue
+                if self.board[row][position] == "_":
+                    possible_moves.append((row, BOARD_LEFT))
+            
+            for position in reversed(range(7)):
+                if position < 6 and self.board[row][position + 1] == "_":
+                    continue
+                if self.board[row][position] == "_":
+                    possible_moves.append((row, BOARD_RIGHT))
+        return possible_moves
 
     def _make_move(self, player: str, row: int, side: str):
         if not 0 <= row < 7:
