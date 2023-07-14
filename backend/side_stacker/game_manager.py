@@ -22,6 +22,17 @@ class GameManager:
     def new_game(self) -> str:
         game = SideStacker()
         self.games[game.id] = {
+            "single_player": False,
+            "game": game,
+            PLAYER_ONE: None,
+            PLAYER_TWO: None,
+        }
+        return game.id
+
+    def new_single_game(self) -> str:
+        game = SideStacker()
+        self.games[game.id] = {
+            "single_player": True,
             "game": game,
             PLAYER_ONE: None,
             PLAYER_TWO: None,
@@ -60,18 +71,29 @@ class GameManager:
 
     async def play(self, data: dict, game_id: str, db: Session):
         # TODO: can't play until everyone joined
+        print(data)
         if game_id not in self.games:
             raise InvalidGame("Game doesnt exist")
         if data["player"] not in (PLAYER_ONE, PLAYER_TWO):
             # TODO: invalid player (let burn, whatever... ??)
             return
-        game = self.games[game_id]["game"]
+        game_obj = self.games[game_id]
+        
         try:
-            game.play(data["player"], data["row"], data["side"])
+            if game_obj["single_player"]:
+                return await self.play_single_player(game_obj, data, game_id, db)
+            else:
+                game_obj["game"].play(data["player"], data["row"], data["side"])
         except InvalidMoveException as e:
             # TODO: communicate move is invalid and why
             return
 
+        await self.broadcast_game_state(game_id, db)
+    
+    async def play_single_player(self, game_obj, data, game_id, db):
+        game_obj["game"].play(data["player"], data["row"], data["side"])
+        await self.broadcast_game_state(game_id, db)
+        game_obj["game"].play_bot()
         await self.broadcast_game_state(game_id, db)
 
     async def broadcast_game_state(self, game_id: str, db: Session):
